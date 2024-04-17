@@ -1,0 +1,70 @@
+Due date:
+    Test: 04/09/2023 @ 11:59pm
+    Code: 04/12/2023 @ 11:59pm
+
+Assignment:
+~~~~~~~~~~~
+
+- Implement some system calls
+- Donate a test case (<csid>.ok and <csid>.dir)
+
+Virtual Address Space:
+~~~~~~~~~~~~~~~~~~~~~~
+
+0x00000000 - 0x80000000       (shared kernel RWX)
+0x80000000 - 0xFFFFFFFF+1     (private user RWX)
+                              (except ioPIC and laPIC, shared kernel)
+
+User code should not be able to access anything outside the user range
+
+System calls:
+~~~~~~~~~~~~~
+
+Look in t0.dir/sbin/sys.h for information about the system calls you need
+to implement
+
+Our system calls will be modeled after their Unix counterparts with a few
+exceptions:
+
+- our semaphores will be much simpler than Sys-V semaphores
+- process ID's are not global, they are parent-scoped
+- our ext2 implementation will not support writing
+- we don't implement file permissions, cwd, uid, gid, etc.
+- each process can have a maximum of 10 active descriptors for
+  each descriptor type: file, semaphore, and child process
+- processes are single-threaded
+- no page-out, no swap space.
+- no signals
+
+Rules:
+~~~~~~
+
+- The kernel directory is yours. Make any changes you want but leave the
+  build-related files alone (Makefile, kernel/Makefile, kernel/script.ld)
+
+- You need to preserve the system call interfaces defined in
+  t0.dir/sbin/{sys.h,sysS}. This includes:
+
+   * The implemented system calls and their numbers
+   * The system call arguments and return values
+   * The system call semantics
+
+- You need to honor the virtual address space rules:
+   * the lower half is for kernel use
+   * the upper half is for process private use except for the two APICs
+
+- You can use any language or build environment to produce your tests but:
+   * please provide sources and makefiles for use by your peers during testing
+   * make sure you commit your binaries as well as sources. The build
+     environment will not build your test
+   * stay within the 100KB limit
+
+Files:
+~~~~~~
+
+- kernel/          contains the kernel files. Do what you want with it.
+                   But leave the build related files alone
+                     - Makefile
+                     - kernel/Makefile
+                     - kernel/sciprt.ld
+

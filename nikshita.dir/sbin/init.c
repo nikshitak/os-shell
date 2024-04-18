@@ -6,13 +6,22 @@ int PIPE = 124;
 int ENTER = 13;
 int SPACE = 32;
 int MAX_INPUT_LENGTH = 255;
+
 // char* shell_commands = {"ls",    "cd", "echo", "pwd",  "cat",  "pipe",
 //                          "touch", "mv", "cp",   "find", "grep", "clear"};
+int my_strcmp(const char *s1, const char *s2) {
+    while (*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *(const unsigned char *)s1 - *(const unsigned char *)s2;
+}
 
 int main(int argc, char** argv) {
     char buf[MAX_INPUT_LENGTH + 1];
     int buffer_index = 0;
     while (1) {
+        //Get user input
         printf("$ ");
         buffer_index = 0;
         while (1) {
@@ -30,39 +39,40 @@ int main(int argc, char** argv) {
                 buffer_index++;
             }
         }
-        printf("\n%s\n", buf);
-        continue;
 
-        // /* this code parses through user input */
-        // char* tokens[256];
-        // char substring[256];
+        //Now that we have the buffer containing the user input, parse it so we can use it"
+        char *arguments[MAX_INPUT_LENGTH + 1];
+        int arg_index = 0;
+        int arg_start = 0;
+        for (int i = 0; i <= buffer_index; i++) {
+            if(buf[i] == SPACE || buf[i] == '\0') {
+                buf[i] = '\0'; // Null-terminate the argument
+                arguments[arg_index++] = &buf[arg_start];
+                arg_start = i + 1; // Set the start of the next argument
+            }
+            if(arg_index >= MAX_INPUT_LENGTH - 1) {
+                break; // Avoid overflow
+            }
+        }
+        arguments[arg_index] = '\0'; // Set the last element to NULL for execvp
 
-        // buffer_index = 0;
-        // int substring_index = 0;
-        // int token_index = 0;
+        printf("\nCommand: %s\n", arguments[0]);
 
-        // while (buf[buffer_index] != '\0') {
-        //     if (buf[buffer_index] == SPACE) {
-        //         substring[substring_index] = '\0';
-        //         tokens[token_index] = substring;
-        //         token_index++;
-        //         // printf("substring: %s\n", tokens[token_index - 1]);
-        //         substring_index = 0;
-        //         buffer_index++;
-        //     } else {
-        //         substring[substring_index] = buf[buffer_index];
-        //         substring_index++;
-        //         buffer_index++;
-        //     }
-        // }
+        // exit functionality 
+        if(my_strcmp(arguments[0], "exit") == 0) {
+            printf("Exiting the shell...\n");
+            break;
+        }
 
-        // // Handle the last substring (if any)
-        // if (substring_index > 0) {
-        //     substring[substring_index] = '\0';
-        //     tokens[token_index] = substring;
-        //     token_index++;
-        //     printf("last substring: %s\n", tokens[token_index - 1]);
-        // }
+        //Now here is the echo functionality
+        if(my_strcmp(arguments[0], "echo") == 0){
+            int i = 1;
+            while(arguments[i] != (void*)0){
+                printf("%s ", arguments[i]);
+                i++;
+            }
+            printf("\n"); // Print a newline at the end
+        }
 
 
 

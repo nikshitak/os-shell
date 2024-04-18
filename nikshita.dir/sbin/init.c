@@ -1,12 +1,5 @@
 #include "libc.h"
 
-void one(int fd) {
-    printf("*** fd = %d\n",fd);
-    printf("*** len = %d\n",len(fd));
-
-    cp(fd,2);
-}
-
 int BACKSPACE = 127;
 int TAB = 9;
 int PIPE = 124;

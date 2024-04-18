@@ -33,7 +33,6 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
     // elf checks
     if (elfheader.maigc0 != 0x7F || elfheader.magic1 != 'E' ||
         elfheader.magic2 != 'L' || elfheader.magic3 != 'F') {
-        // Debug::printf("Catching it\n");
         return -1;
     } else if (elfheader.encoding != 1) {
         return -1;
@@ -62,110 +61,30 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
         size = size + (4 - (size % 4));
         char* elem = new char[size];
         memcpy(elem, argv[num - 1], size);
-        Debug::printf("string = %s\n", elem);
         sp -= size;
-        Debug::printf("new location of sp: %x\n", sp);
         addresses[num - 1] = sp;
-        // Debug::printf("addresses[%d] = %x\n", num - 1, sp);
 
         char* pointer = (char*) sp;
         memcpy(pointer, elem, size);
-        Debug::printf("string = %s\n", pointer);
         num--;
     }
 
     sp -= 4;
-    Debug::printf("null pointer starts at %x\n", sp);
     bzero((char*) sp, 4);
 
     for (int i = argc - 1; i >= 0; i--) {
         sp -= 4;
-        Debug::printf("addresses[%d] = %x\n", i, addresses[i]);
         uint32_t* argvP = (uint32_t*) sp;
-        Debug::printf("new sp: %x\n", sp);
         argvP[0] = addresses[i];
-        Debug::printf("make sure addr went on stack: %x\n", argvP[0]);
     }
 
     sp -= 4;
     uint32_t* argP = (uint32_t*) sp;
     argP[0] = (sp + 4);
-    Debug::printf("where does argv start: %x\n", argP[0]);
-    Debug::printf("new sp: %x\n", sp);
 
     sp -= 4;
     argP = (uint32_t*) sp;
     argP[0] = argc;
-    Debug::printf("what is argc: %d\n", argP[0]);
-    Debug::printf("new sp: %x\n", sp);
-
-
-
-    // Copy arguments
-
-    // add argv elements to stack
-    // int numElements = argc;
-    // uint32_t addresses[argc];
-    // while (numElements > 0) {
-    //     int sizeToSubtract = K::strlen(argv[numElements - 1]) + 1;
-    //     // Debug::printf("size to subtract: %d\n", sizeToSubtract);
-    //     sp -=
-    //         (sizeToSubtract +
-    //          (4 - (sizeToSubtract % 4)));  // sp points at beginning of wherever
-    //                                        // the element should start
-    //     Debug::printf("elem: %x\n", sp);
-    //     Debug::printf("elemenets: %s\n", argv[numElements - 1]);
-    //     addresses[numElements - 1] = sp;  // assume this is right
-    //     const char* elem = argv[numElements - 1];
-    //     char* stackPointer = (char*)sp;
-    //     memcpy(stackPointer, elem,
-    //            sizeToSubtract);  // hopefully this actually adds value to stack
-    //     numElements--;
-    // }
-
-    // sp -= 4;
-    // bzero((char*) sp, 4);
-    // Debug::printf("null: %x\n", sp);
-    // char buffer[4];
-
-    // 4 byte aligned, add a 4 byte null
-    // sp -= 4;
-    // char buffer[4];
-    // char* stackPointer = (char*)sp;
-    // memcpy(stackPointer, buffer, 4);
-
-    // add pointers of strings to the stack
-    // pointers point to where values are on the stack
-    // assuming the addresses are right
-    // numElements = argc - 1;
-    // for (int i = numElements; i >= 0; i--) {
-    //     sp -= 4;
-    //     uint32_t* stackP = (uint32_t*) sp;
-    //     stackP[0] = addresses[0];
-    // }
-
-
-
-    // sp -= (argc * 4);
-    // stackPointer = (char*)sp;
-    // Debug::printf("where does addresses start? %x\n", sp + 4);
-    // Debug::printf("first elem in addresses %x\n", addresses[0]);
-    // memcpy(stackPointer, (char*) (sp + 4), argc * 4);
-    // Debug::printf("argv pointers: %x\n", sp);
-
-    // // copy the address for argv
-    // sp -= 4;
-    // // uint32_t addr = (uint32_t)&argv;
-    // char* stackPointer = (char*)sp;
-    // // Debug::printf("what does argv hold? %x\n", addr);
-    // memcpy(stackPointer, (char*) (sp + 4), 4);
-    // Debug::printf("argv pointer: %x\n", sp);
-
-    // // copy the argc to the stack
-    // sp -= 4;
-    // uint32_t* stackP = (uint32_t*)sp;
-    // stackP[0] = argc;
-    // Debug::printf("argc: %x\n", sp);
 
     uint32_t e = ELF::load(file);
     file = nullptr;
@@ -182,7 +101,7 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
     uint32_t userPC = frame[0];
 
     // Debug::printf("*** syscall #%d\n", eax);
-
+    
     switch (eax) {
         case 0: {
             auto status = userEsp[1];
@@ -198,7 +117,6 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             }
             // return # bytes written
             int fd = (int)userEsp[1];
-            // Debug::printf("fd: %d\n", fd);
             char* buf = (char*)userEsp[2];
             size_t nbyte = (size_t)userEsp[3];
             auto file = current()->process->getFile(fd);
@@ -286,22 +204,14 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
                        K::strlen((char*)(userEsp[i])));
                 elem[size - 1] = '\0';
                 // }
-                // Debug::printf("elem = %s\n", elem);
                 argvMod[i - 2] = elem;
                 i++;
             }
 
             int size = K::strlen((char*)userEsp[1]) + 1;
             char* path = new char[size];
-            // Debug::printf("what is the length: %d\n", size);
 
             memcpy(path, (char*)userEsp[1], size);
-
-            // current()->process->clear_private();
-            // Debug::printf("path: %s\n", path);
-            // Debug::printf("what is the length: %d\n", size);
-            // path[size - 1] = '\0';
-            // Debug::printf("path: %s\n", path);
             SYS::exec(path, count, argvMod);
 
             return -1;
@@ -311,9 +221,6 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
         {
             char* path = (char*)userEsp[1];
             auto file = root_fs->find(root_fs->root, path);
-            
-            // Debug::printf("path: %s\n", path);
-            // Debug::printf("is file existant? %s\n", file == nullptr ? "no" : "yes");
 
             if (file == nullptr || path[0] == '\0') {
                 return -1;
@@ -336,7 +243,6 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
 
             if (file == nullptr) {  // do it here cuz if it's null even after
                                     // all that effort, we want to return -1
-                // Debug::printf("do we get here\n");
                 return -1;
             }
 
@@ -356,7 +262,6 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
 
         case 12: /* read */
         {
-            // Debug::printf("what is this: %x\n", userEsp[2]);
             if (userEsp[2] < 0x80000000 || userEsp[2] == 0xFEC00000 || userEsp[2] == 0xFEE00000) {
                 return -1;
             } else if (userEsp[1] == 1) {

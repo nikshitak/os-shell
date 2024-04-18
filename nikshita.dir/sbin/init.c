@@ -1,26 +1,11 @@
 #include "libc.h"
-/*
-    This test case mimics t0 in that it doesn't test all of the
-    system calls, just open, fork, read, write, execl, len, 
-    close, and seek. 
-*/
 
-/*
-    makes sure you're getting the right file directory and getting length right
-    tests wrapper class since I struggled with that
-
-    cp tests read and write specifically
-*/
 void one(int fd) {
     printf("*** fd = %d\n",fd);
     printf("*** len = %d\n",len(fd));
 
     cp(fd,2);
 }
-
-/*
-Opens and tests the other files using the syscalls mentioned above. 
-*/
 
 int BACKSPACE = 127;
 int TAB = 9;

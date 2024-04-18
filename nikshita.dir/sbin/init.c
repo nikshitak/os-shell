@@ -28,7 +28,9 @@ int main(int argc, char** argv) {
             break;
         }
         if((int)buf[buffer_index - 1] == BACKSPACE){
-            printf("Backspace");
+            // buf[buffer_index - 2] = '\0';
+            
+            printf("\b \b");
         }
         printf("%c", buf[buffer_index - 1]);
     }
@@ -63,7 +65,7 @@ int main(int argc, char** argv) {
         substring[substring_index] = '\0';
         tokens[token_index] = substring;
         token_index++;
-        // printf("last substring: %s\n", tokens[token_index - 1]);
+        printf("last substring: %s\n", tokens[token_index - 1]);
     }
 
     // all strings are in tokens. hopefully

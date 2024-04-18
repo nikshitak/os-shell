@@ -14,36 +14,23 @@ int main(int argc, char** argv) {
     int buffer_index = 0;
     while (1) {
         printf("$ ");
-
+        buffer_index = 0;
         while (1) {
-            read(0, buf + buffer_index, 5);
-            buffer_index++;
-            if ((int)buf[buffer_index - 1] == ENTER) {
-                buf[buffer_index + 1] = '\0';
-                printf(
-                    "\nabout to wrap it up... lets see if we hit a backspace "
-                    "in "
-                    "this string\n");
-                for (int i = 0; i < buffer_index + 1; i++) {
-                    char rv = buf[i];
-                    if ((int)rv == BACKSPACE) {
-                        printf("THERE IS A BACKSPACE IN THIS STRING\n");
-                    } else {
-                        printf("%c", rv);
-                    }
-                }
+            char c;
+            read(0, &c, 1);
+            if (c == ENTER) {
+                buf[buffer_index] = '\0';
                 break;
-            } else if ((int)buf[buffer_index - 1] == BACKSPACE) {
-                buf[buffer_index - 1] = '\0';
-                buf[buffer_index - 2] = '\0';
-                buffer_index -= 2;
+            } else if (c == BACKSPACE) {
+                buffer_index -= 1;
                 printf("\b \b");
             } else {
-                printf("%c", buf[buffer_index - 1]);
+                buf[buffer_index] = c;
+                printf("%c", c);
+                buffer_index++;
             }
         }
-        printf("\nFinal String: %s\n", buf);
-        // printf("We done!\n");
+        printf("\n%s\n", buf);
         continue;
 
         // /* this code parses through user input */

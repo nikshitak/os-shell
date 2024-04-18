@@ -26,13 +26,14 @@ int main(int argc, char** argv) {
                 }
             }
             break;
-        }
-        if((int)buf[buffer_index - 1] == BACKSPACE){
-            // buf[buffer_index - 2] = '\0';
-            
+        }else if((int)buf[buffer_index - 1] == BACKSPACE){
+            buf[buffer_index - 1] = '\0';
+            buf[buffer_index - 2] = '\0';
+            buffer_index -= 2;
             printf("\b \b");
+        }else{
+            printf("%c", buf[buffer_index - 1]);
         }
-        printf("%c", buf[buffer_index - 1]);
     }
     printf("\nFinal String: %s\n", buf);
     // printf("We done!\n");

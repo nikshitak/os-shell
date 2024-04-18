@@ -21,42 +21,41 @@ void one(int fd) {
 /*
 Opens and tests the other files using the syscalls mentioned above. 
 */
+
+int BACKSPACE = 127;
+int TAB = 9;
+int PIPE = 124;
+int ENTER = 13;
+int SPACE = 32;
+int MAX_INPUT_LENGTH = 255;
+
 int main(int argc, char** argv) {
-    printf("*** %d\n",argc);
-    for (int i=0; i<argc; i++) {
-        printf("*** %s\n",argv[i]);
+    char buf[MAX_INPUT_LENGTH + 1];
+    int buffer_index = 0;
+    printf("$ ");
+    while(1){
+        read(0, buf + buffer_index, 5);
+        buffer_index++;
+        if((int)buf[buffer_index - 1] == ENTER){
+            buf[buffer_index + 1] = '\0';
+            printf("\nabout to wrap it up... lets see if we hit a backspace in this string\n");
+            for(int i = 0; i < buffer_index + 1; i++){
+                char rv = buf[i];
+                if((int)rv == BACKSPACE){
+                    printf("THERE IS A BACKSPACE IN THIS STRING\n");
+                }else{
+                    printf("%c", rv);
+                }
+            }
+            break;
+        }
+        if((int)buf[buffer_index - 1] == BACKSPACE){
+            printf("Backspace");
+        }
+        printf("%c", buf[buffer_index - 1]);
     }
-    int fd = open("/etc/data.txt",0);
-    one(fd);
-
-    printf("*** close = %d\n",close(fd));
-
-    one(fd);
-    one(100);
-
-
-    printf("*** open again %d\n",open("/etc/data.txt",0));
-    printf("*** seek %ld\n",seek(3,17));
-    
-    int id = fork();
-
-    if (id < 0) {
-        printf("fork failed");
-    } else if (id == 0) {
-        /* child */
-        printf("*** in child\n");
-        int rc = execl("/sbin/shell","shell","a","b","c",0);
-        printf("*** execl failed, rc = %d\n",rc);
-    } else {
-        /* parent */
-        uint32_t status = 42;
-        wait(id,&status);
-        printf("*** back from wait %ld\n",status);
-
-        int fd = open("/etc/panic.txt",0);
-        cp(fd,1);
-    }
-
+    printf("\nFinal String: %s\n", buf);
+    // printf("We done!\n");
     shutdown();
     return 0;
 }

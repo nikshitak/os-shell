@@ -35,60 +35,13 @@ int main(int argc, char** argv) {
     printf("\nFinal String: %s\n", buf);
     // printf("We done!\n");
 
-    /* parse through the string */
-    // int offset = 0;
-    // buffer_index = 0;
-    // int space_count = 0;
-
-    // printf("after getting string\n");
-
-    // // count # spaces in buffer
-    // while (buf[buffer_index] != '\0') {
-    //     printf("in here for how long\n");
-    //     if ((int)buf[buffer_index] == SPACE) {
-    //         space_count++;
-    //     }
-    //     buffer_index++;
-    // }
-    // printf("num spaces: %d\n", space_count);
-
-    // // add tokens to tokens array
-    // char* tokens[space_count + 1];
-    // int token_index = 0;
-    // tokens[space_count] = '\0'; // nullptr
-    // buffer_index = 0;
-
-    // while (buf[offset] != '\0' || buf[offset] != 0) {
-    //     printf("offset: %d\n", offset);
-    //     char token[256];
-    //     while (buf[buffer_index] != SPACE) {
-    //         token[buffer_index] = buf[buffer_index + offset];
-    //         printf("letter: %c\n", token[buffer_index]);
-    //         buffer_index++;
-    //     }
-    //     token[buffer_index + 1] = '\0';
-    //     printf("token: %s\n", token);
-    //     tokens[token_index] = token;
-    //     offset += buffer_index + 1;
-    //     buffer_index = 0;
-    //     token_index++;
-    // }
-
-    // tokens[token_index] = 0;
-
-    // token_index = 0;
-    // while (tokens[token_index] != 0) {
-    //     printf("token2: %s\n", tokens[token_index]);
-    //     token_index++;
-    // }
-
     char substring[256];
 
     buffer_index = 0;
     int substring_index = 0;
 
     while (buf[buffer_index] != '\0') {
-        if (buf[buffer_index] == ' ') {
+        if (buf[buffer_index] == SPACE) {
             substring[substring_index] = '\0';
             printf("substring: %s\n", substring);
             substring_index = 0;

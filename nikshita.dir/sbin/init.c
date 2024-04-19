@@ -6,6 +6,7 @@ int PIPE = 124;
 int ENTER = 13;
 int SPACE = 32;
 int MAX_INPUT_LENGTH = 255;
+char starting_path[256] = "/sbin/";
 
 // char* shell_commands = {"ls",    "cd", "echo", "pwd",  "cat",  "pipe",
 //                          "touch", "mv", "cp",   "find", "grep", "clear"};
@@ -17,11 +18,11 @@ int my_strcmp(const char *s1, const char *s2) {
     return *(const unsigned char *)s1 - *(const unsigned char *)s2;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     char buf[MAX_INPUT_LENGTH + 1];
     int buffer_index = 0;
     while (1) {
-        //Get user input
+        // Get user input
         printf("$ ");
         buffer_index = 0;
         while (1) {
@@ -40,53 +41,51 @@ int main(int argc, char** argv) {
             }
         }
 
-        //Now that we have the buffer containing the user input, parse it so we can use it"
+        // Now that we have the buffer containing the user input, parse it so we
+        // can use it
         char *arguments[MAX_INPUT_LENGTH + 1];
         int arg_index = 0;
         int arg_start = 0;
         for (int i = 0; i <= buffer_index; i++) {
-            if(buf[i] == SPACE || buf[i] == '\0') {
-                buf[i] = '\0'; // Null-terminate the argument
+            if (buf[i] == SPACE || buf[i] == '\0') {
+                buf[i] = '\0';  // Null-terminate the argument
                 arguments[arg_index++] = &buf[arg_start];
-                arg_start = i + 1; // Set the start of the next argument
+                arg_start = i + 1;  // Set the start of the next argument
             }
-            if(arg_index >= MAX_INPUT_LENGTH - 1) {
-                break; // Avoid overflow
+            if (arg_index >= MAX_INPUT_LENGTH - 1) {
+                break;  // Avoid overflow
             }
         }
-        arguments[arg_index] = '\0'; // Set the last element to NULL for execvp
+        arguments[arg_index] = '\0';  // Set the last element to NULL for execvp
+                                      // (execl in our case)
 
-        printf("\nCommand: %s\n", arguments[0]);
+        int id = fork();
+        if (id == 0) {
+            int size = sizeof(arguments[0]);
+            memcpy(starting_path + 6, arguments[0], size);
+            // memcpy(starting_path + 9 + size, ".c\0", 3);
+            // execl(starting_path)
 
-        // exit functionality 
-        if(my_strcmp(arguments[0], "exit") == 0) {
-            printf("Exiting the shell...\n");
-            break;
-        }
-
-        //Now here is the echo functionality
-        if(my_strcmp(arguments[0], "echo") == 0){
-            int i = 1;
-            while(arguments[i] != (void*)0){
-                printf("%s ", arguments[i]);
-                i++;
+            int stat = execl(starting_path, arguments[0], 0);
+            if (stat < 0) {
+                printf("execl failed\n");
             }
-            printf("\n"); // Print a newline at the end
+           
+        } else if (id > 0) {
+            // parent
+            uint32_t status = 42;
+            wait(id, &status);
+            printf("*** back from wait %ld\n", status);
+        } else {
+            printf("invalid command");
         }
 
-
-
-
-
-        // all strings are in tokens. hopefully
-        // TODO: put prompt in a while(1) loop, break... never. keep promptign
-        // user if command isn't recognized, throw an error (have an array of
-        // strings for now) call fork, see if inputs are being called in fork
-        // modify fork so that instead of switching to user, it does...
-        // something else. run the shell call? see if it's valid? probably see
-        // if it's valid see if you need to modify execl to deal with Shell
-        // calls now.
+        // TODO: ask alex how to create the binary file using the 
+        // MAKEFILE because I don't have an exit.o file and 
+        // manually creating that is causing issues
+        // in other places (undefined reference to main)
     }
+
     shutdown();
     return 0;
 }

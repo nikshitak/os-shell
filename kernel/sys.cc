@@ -18,13 +18,19 @@
 int SYS::exec(const char* path, int argc, const char* argv[]) {
     using namespace gheith;
     ElfHeader elfheader;
+    Debug::printf("path: %s\n", path);
+
+    Debug::printf("do we get to sys::exec\n");
 
     auto file = root_fs->find(root_fs->root, path);
 
     if (file == nullptr) {
+        Debug::printf("file is null\n");
         return -1;
     }
     if (!file->is_file()) {
+        Debug::printf("file is not a file\n");
+        Debug::printf("file type: %d\n", file->get_type());
         return -1;
     }
 
@@ -33,18 +39,25 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
     // elf checks
     if (elfheader.maigc0 != 0x7F || elfheader.magic1 != 'E' ||
         elfheader.magic2 != 'L' || elfheader.magic3 != 'F') {
+        Debug::printf("wrong magic numbers\n");
         return -1;
     } else if (elfheader.encoding != 1) {
+        Debug::printf("encoding is wrong\n");
         return -1;
     } else if (elfheader.cls != 1) {
+        Debug::printf("cls is wrong\n");
         return -1;
     } else if (elfheader.abi != 0) {
+        Debug::printf("abi is wrong\n");
         return -1;
     } else if (elfheader.type != 2) {
+        Debug::printf("type is wrong\n");
         return -1;
     } else if (elfheader.version != 1) {
+        Debug::printf("version is wrong\n");
         return -1;
     } else if (elfheader.phoff == 0) {
+        Debug::printf("phoff is wrong\n");
         return -1;
     }
 
@@ -189,7 +202,7 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
                 count++;
                 i++;
             }
-            if ((void*) userEsp[i - 1] == nullptr) {
+            if ((void*) userEsp[i - 1] == nullptr) { // path is null
                 return -1;
             }
 
@@ -212,9 +225,9 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             char* path = new char[size];
 
             memcpy(path, (char*)userEsp[1], size);
-            SYS::exec(path, count, argvMod);
+            int stat = SYS::exec(path, count, argvMod);
 
-            return -1;
+            return stat;
         }
 
         case 10: /* open */

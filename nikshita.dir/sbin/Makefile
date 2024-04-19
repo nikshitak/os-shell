@@ -1,4 +1,4 @@
-UTILS = init shell
+UTILS = init shell exit
 
 CFLAGS = -std=c99 -m32 -nostdlib -g -O2 -Wall -Werror
 

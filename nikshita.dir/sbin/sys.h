@@ -78,4 +78,11 @@ extern int fork();
 /* a nullptr indicates end of arguments */
 extern int execl(const char* path, const char* arg0, ...);
 
+/* execvp */
+/* returning indicates an error i think */
+/* path is the path to the binary file */
+/* argv are the arguments, null terminated */
+/* null terminated by having a 0 at the end of argv array*/
+extern int execvp(const char* path, char* argv[]);
+
 #endif

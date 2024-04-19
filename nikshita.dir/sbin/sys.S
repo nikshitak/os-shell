@@ -112,3 +112,10 @@ seek:
 	mov $13,%eax
 	int $48
 	ret
+
+	# int execvp(const char* path, char** argv)
+	.global execvp
+execvp:
+	mov $14,%eax
+	int $48
+	ret

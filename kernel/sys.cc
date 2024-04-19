@@ -18,9 +18,9 @@
 int SYS::exec(const char* path, int argc, const char* argv[]) {
     using namespace gheith;
     ElfHeader elfheader;
-    Debug::printf("path: %s\n", path);
+    // Debug::printf("path: %s\n", path);
 
-    Debug::printf("do we get to sys::exec\n");
+    // Debug::printf("do we get to sys::exec\n");
 
     auto file = root_fs->find(root_fs->root, path);
 
@@ -101,6 +101,8 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
 
     uint32_t e = ELF::load(file);
     file = nullptr;
+
+    // Debug::printf("do we get all the way here");
 
     switchToUser(e, sp, 0);  // return address is handled, clear addr space.
     Debug::panic("*** implement switchToUser");
@@ -295,6 +297,61 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             }
             Shared<File> fd = current()->process->getFile(userEsp[1]);
             return fd->seek(userEsp[2]);
+        }
+
+        case 14: /* execvp */
+        {
+            int i = 0;
+            // while (userEsp[i]) { 
+            //     Debug::printf("userEsp[%d]: %s\n", i, (char*)userEsp[i]);
+            //     i++;
+            // }
+
+            // Debug::printf("path: %s\n", (char*)userEsp[1]);
+
+
+            int count = 0;
+            i = 5;
+            while (userEsp[i]) {
+                count++;
+                i++;
+            }
+            if ((void*) userEsp[i - 1] == nullptr) { // path is null
+                return -1;
+            }
+
+            const char** argvMod = new const char*[count + 1];
+
+            i = 5;
+            while (userEsp[i]) {
+                char* elem;
+                int size = K::strlen((char*)(userEsp[i])) + 1;  // plus 1
+                elem = new char[K::strlen((char*)(userEsp[i]))];
+                memcpy(elem, (char*)(userEsp[i]),
+                       K::strlen((char*)(userEsp[i])));
+                elem[size - 1] = '\0';
+                // }
+                argvMod[i - 5] = elem;
+                i++;
+            }
+
+            int size = K::strlen((char*)userEsp[1]) + 1;
+            char* path = new char[size];
+
+            memcpy(path, (char*)userEsp[1], size);
+
+
+            // Debug::printf("path: %s\n", path);
+            // Debug::printf("count: %d\n", count);
+            // int j = 0;
+            // while (argvMod[j]) {
+            //     Debug::printf("argvMod[%d]: %s\n", j, argvMod[j]);
+            //     j++;
+            // }
+            argvMod[i] = nullptr;
+            int stat = SYS::exec(path, count, argvMod);
+
+            return stat;
         }
 
         default:

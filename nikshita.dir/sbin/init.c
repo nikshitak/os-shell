@@ -7,6 +7,7 @@ int ENTER = 13;
 int SPACE = 32;
 int MAX_INPUT_LENGTH = 255;
 char starting_path[256] = "/sbin/";
+//                         012345
 
 // char* shell_commands = {"ls",    "cd", "echo", "pwd",  "cat",  "pipe",
 //                          "touch", "mv", "cp",   "find", "grep", "clear"};
@@ -61,14 +62,21 @@ int main(int argc, char **argv) {
 
         int id = fork();
         if (id == 0) {
+            // int j = 0;
+            // while (arguments[j]) {
+            //     printf("arg %d: %s\n", j, arguments[j]);
+            //     j++;
+            // }
+
+
             int size = sizeof(arguments[0]);
             memcpy(starting_path + 6, arguments[0], size);
             // memcpy(starting_path + 9 + size, ".c\0", 3);
             // execl(starting_path)
 
-            int stat = execl(starting_path, arguments[0], 0);
+            int stat = execvp(starting_path, arguments);
             if (stat < 0) {
-                printf("execl failed\n");
+                printf("execvp failed\n");
             }
            
         } else if (id > 0) {
@@ -84,6 +92,9 @@ int main(int argc, char **argv) {
         // MAKEFILE because I don't have an exit.o file and 
         // manually creating that is causing issues
         // in other places (undefined reference to main)
+
+        // TODO: hardcode exit to exit current shell
+        // important when running nested shells. 
     }
 
     shutdown();

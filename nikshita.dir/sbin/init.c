@@ -59,7 +59,8 @@ int main(int argc, char **argv) {
         }
         arguments[arg_index] = '\0';  // Set the last element to NULL for execvp
                                       // (execl in our case)
-
+        
+        printf("\n"); // prints out anything on the next line. 
         int id = fork();
         if (id == 0) {
             // int j = 0;
@@ -75,15 +76,18 @@ int main(int argc, char **argv) {
             // execl(starting_path)
 
             int stat = execvp(starting_path, arguments);
-            if (stat < 0) {
-                printf("execvp failed\n");
+            if (stat == -1) {
+                printf("invalid command: %s\n", arguments[0]);
             }
            
         } else if (id > 0) {
             // parent
             uint32_t status = 42;
             wait(id, &status);
-            printf("*** back from wait %ld\n", status);
+            if (status != 0) {
+                printf("wait failed\n");
+            }
+
         } else {
             printf("invalid command");
         }

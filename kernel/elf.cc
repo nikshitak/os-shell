@@ -23,8 +23,11 @@ uint32_t ELF::load(Shared<Node> file) {
             uint32_t memsz = phdr.memsz;
             uint32_t filesz = phdr.filesz;
 
-            Debug::printf("vaddr:%x memsz:0x%x filesz:0x%x fileoff:%x\n",
-                p,memsz,filesz,phdr.offset);
+
+            /* can't tell if this is a problem with echo, but commented this 
+            for now so that it doesn't appear in the terminal */
+            // Debug::printf("vaddr:%x memsz:0x%x filesz:0x%x fileoff:%x\n",
+            //     p,memsz,filesz,phdr.offset);
             file->read_all(phdr.offset,filesz,p);
             bzero(p + filesz, memsz - filesz);
         }

@@ -25,13 +25,12 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
     auto file = root_fs->find(root_fs->root, path);
 
     if (file == nullptr) {
-        Debug::printf("file is null\n");
         return -1;
     }
     if (!file->is_file()) {
         Debug::printf("file is not a file\n");
         Debug::printf("file type: %d\n", file->get_type());
-        return -1;
+        return -2;
     }
 
     file->read(0, elfheader);
@@ -40,25 +39,25 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
     if (elfheader.maigc0 != 0x7F || elfheader.magic1 != 'E' ||
         elfheader.magic2 != 'L' || elfheader.magic3 != 'F') {
         Debug::printf("wrong magic numbers\n");
-        return -1;
+        return -3;
     } else if (elfheader.encoding != 1) {
         Debug::printf("encoding is wrong\n");
-        return -1;
+        return -4;
     } else if (elfheader.cls != 1) {
         Debug::printf("cls is wrong\n");
-        return -1;
+        return -5;
     } else if (elfheader.abi != 0) {
         Debug::printf("abi is wrong\n");
-        return -1;
+        return -6;
     } else if (elfheader.type != 2) {
         Debug::printf("type is wrong\n");
-        return -1;
+        return -7;
     } else if (elfheader.version != 1) {
         Debug::printf("version is wrong\n");
-        return -1;
+        return -8;
     } else if (elfheader.phoff == 0) {
         Debug::printf("phoff is wrong\n");
-        return -1;
+        return -9;
     }
 
     current()->process->clear_private();
@@ -106,7 +105,7 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
 
     switchToUser(e, sp, 0);  // return address is handled, clear addr space.
     Debug::panic("*** implement switchToUser");
-    return -1;
+    return -10;
 }
 
 extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {

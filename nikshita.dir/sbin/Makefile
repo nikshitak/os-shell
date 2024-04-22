@@ -1,10 +1,10 @@
-UTILS = init shell exit echo
+UTILS = init shell exit echo our_shell login 
 
 CFLAGS = -std=c99 -m32 -nostdlib -g -O2 -Wall -Werror
 
 all : $(UTILS)
 
-OFILES = sys.o crt0.o libc.o heap.o machine.o printf.o
+OFILES = sys.o crt0.o libc.o heap.o machine.o printf.o input_functions.o
 
 # keep all files
 .SECONDARY :

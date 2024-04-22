@@ -119,3 +119,7 @@ execvp:
 	mov $14,%eax
 	int $48
 	ret
+
+	# char** read_dir(const char* path)
+	.global read_dir
+

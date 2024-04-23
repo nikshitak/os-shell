@@ -13,3 +13,7 @@ int read_input_silent(char *buf, int buf_size);
 /*This is a quick implementation of strcmp so that we can use them in our implementation of commands*/
 /*Return 0 if equal, num >= 1 otherwise*/
 int my_strcmp(const char *s1, const char *s2);
+
+char *strstr(const char *haystack, const char *needle);
+
+char* fgets(char* s, int size, int fd);

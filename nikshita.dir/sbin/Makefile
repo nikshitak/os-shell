@@ -1,4 +1,4 @@
-UTILS = init shell exit echo our_shell login cat grep
+UTILS = init shell exit echo our_shell login cat grep ls
 
 CFLAGS = -std=c99 -m32 -nostdlib -g -O2 -Wall -Werror
 
@@ -24,6 +24,6 @@ $(UTILS) : % : Makefile %.o $(OFILES)
 clean ::
 	rm -f *.o
 	rm -f *.d
-	#rm -f $(UTILS)
+	rm -f $(UTILS)
 
 -include *.d

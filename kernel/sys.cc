@@ -15,6 +15,13 @@
 #include "stdint.h"
 #include "threads.h"
 
+struct DirectoryEntry {
+    uint32_t inode;
+    uint16_t rec_len;
+    uint8_t name_len;
+    uint8_t file_type;
+};
+
 int SYS::exec(const char* path, int argc, const char* argv[]) {
     using namespace gheith;
     ElfHeader elfheader;
@@ -63,7 +70,7 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
     current()->process->clear_private();
 
     uint32_t sp = 0xefffe000;
-    
+
     // add strings to stack
     int num = argc;
     uint32_t* addresses = new uint32_t[argc];
@@ -76,26 +83,26 @@ int SYS::exec(const char* path, int argc, const char* argv[]) {
         sp -= size;
         addresses[num - 1] = sp;
 
-        char* pointer = (char*) sp;
+        char* pointer = (char*)sp;
         memcpy(pointer, elem, size);
         num--;
     }
 
     sp -= 4;
-    bzero((char*) sp, 4);
+    bzero((char*)sp, 4);
 
     for (int i = argc - 1; i >= 0; i--) {
         sp -= 4;
-        uint32_t* argvP = (uint32_t*) sp;
+        uint32_t* argvP = (uint32_t*)sp;
         argvP[0] = addresses[i];
     }
 
     sp -= 4;
-    uint32_t* argP = (uint32_t*) sp;
+    uint32_t* argP = (uint32_t*)sp;
     argP[0] = (sp + 4);
 
     sp -= 4;
-    argP = (uint32_t*) sp;
+    argP = (uint32_t*)sp;
     argP[0] = argc;
 
     uint32_t e = ELF::load(file);
@@ -115,7 +122,7 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
     uint32_t userPC = frame[0];
 
     // Debug::printf("*** syscall #%d\n", eax);
-    
+
     switch (eax) {
         case 0: {
             auto status = userEsp[1];
@@ -126,7 +133,8 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             return 0;
         case 1: /* write */
         {
-            if (userEsp[2] < 0x80000000 || userEsp[2] == 0xFEC00000 || userEsp[2] == 0xFEE00000) {
+            if (userEsp[2] < 0x80000000 || userEsp[2] == 0xFEC00000 ||
+                userEsp[2] == 0xFEE00000) {
                 return -1;
             }
             // return # bytes written
@@ -203,7 +211,7 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
                 count++;
                 i++;
             }
-            if ((void*) userEsp[i - 1] == nullptr) { // path is null
+            if ((void*)userEsp[i - 1] == nullptr) {  // path is null
                 return -1;
             }
 
@@ -276,7 +284,8 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
 
         case 12: /* read */
         {
-            if (userEsp[2] < 0x80000000 || userEsp[2] == 0xFEC00000 || userEsp[2] == 0xFEE00000) {
+            if (userEsp[2] < 0x80000000 || userEsp[2] == 0xFEC00000 ||
+                userEsp[2] == 0xFEE00000) {
                 return -1;
             } else if (userEsp[1] == 1) {
                 return -1;
@@ -301,13 +310,12 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
         case 14: /* execvp */
         {
             int i = 0;
-            // while (userEsp[i]) { 
+            // while (userEsp[i]) {
             //     Debug::printf("userEsp[%d]: %s\n", i, (char*)userEsp[i]);
             //     i++;
             // }
 
             // Debug::printf("path: %s\n", (char*)userEsp[1]);
-
 
             int count = 0;
             i = 5;
@@ -315,7 +323,7 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
                 count++;
                 i++;
             }
-            if ((void*) userEsp[i - 1] == nullptr) { // path is null
+            if ((void*)userEsp[i - 1] == nullptr) {  // path is null
                 return -1;
             }
 
@@ -339,7 +347,6 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
 
             memcpy(path, (char*)userEsp[1], size);
 
-
             // Debug::printf("path: %s\n", path);
             // Debug::printf("count: %d\n", count);
             // int j = 0;
@@ -351,6 +358,41 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             int stat = SYS::exec(path, count, argvMod);
 
             return stat;
+        }
+
+        case 15: /* opendir */
+        {
+            // Debug::printf("called here\n");
+            char* path = (char*)userEsp[1];
+            // Debug::printf("path: %s\n", path);
+            auto file = root_fs->find(root_fs->root, path);
+
+            if (!file->is_dir()) {
+                Debug::printf("not a directory\n");
+            } else if (file == nullptr) {
+                Debug::printf("not found\n");
+            }
+
+            if (file == nullptr || path[0] == '\0') {
+                return -1;
+            }
+
+            // file is now guaranteed to be an actual directory.
+            ActualFile* fd = new ActualFile(file);
+            int stat = current()->process->setFile(Shared<File>(fd));
+            if (stat < 0) {
+                Debug::printf("unable to set file in opendir\n");
+            }
+            return stat;
+        }
+
+        case 16: /* readdir */
+        {
+            Shared<File> fd = current()->process->getFile(userEsp[1]);
+            fd->seek(userEsp[3]);
+            int bytes = fd->read((char*) userEsp[2], 1024);
+            if (bytes > 0) return (int) userEsp[2];
+            else return 0;
         }
 
         default:

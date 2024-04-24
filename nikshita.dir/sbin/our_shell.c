@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
             uint32_t status = 42;
             wait(id, &status);
             if (status != 0) {
-                printf("wait failed\n");
+                printf("wait failed 3\n");
             }
 
         } else {

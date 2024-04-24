@@ -120,6 +120,17 @@ execvp:
 	int $48
 	ret
 
-	# char** read_dir(const char* path)
-	.global read_dir
+    # int opendir(const char* path)
+    .global opendir
+opendir:
+    mov $15,%eax
+    int $48
+    ret
+
+	# int readdir(const char* path, int entry_num)
+    .global readdir
+readdir:
+    mov $16,%eax
+    int $48
+    ret
 

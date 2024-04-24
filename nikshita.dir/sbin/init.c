@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
         int id = fork();
         if(id == 0){
             execl("/sbin/login", 0);
-            exit(0); // Exit child process after execve
+            exit(0); // Exit child process after execvp
         }
         else if(id < 0){
             // Fork failed
@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
             uint32_t status = 42;
             wait(id, &status); // Wait for child process to finish
             if (status != 0) {
-                printf("wait failed\n");
+                printf("wait failed 1\n");
             }
         }
     }

@@ -10,7 +10,7 @@ struct User{
 };
 
 struct User users[MAX_USERS] = {
-    {"cookieMonster", "sesameStreet123"},
+    {"bob", "bob"},
     {"urmom", "urmomdotcom"},
     {"test", "test123"}
 };
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             printf("Username: ");
             continue;
         }
-        printf("login successful! Hello %s\n", username);
+        printf("\nLogin successful! Hello %s\n", username);
         int id = fork();
         if(id == 0){
             execl("/sbin/our_shell", 0);
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
             uint32_t status = 42;
             wait(id, &status);
             if (status != 0) {
-                printf("wait failed\n");
+                printf("wait failed 2\n");
             }
         } else {
             printf("fork failed\n");

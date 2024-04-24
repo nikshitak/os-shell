@@ -3,6 +3,14 @@
 
 #include "stdint.h"
 
+struct DirectoryEntry {
+   uint32_t inode;
+   uint16_t rec_len;
+   uint8_t name_len;
+   uint8_t file_type;
+   char name[255];
+};
+
 /****************/
 /* System calls */
 /****************/
@@ -85,5 +93,11 @@ extern int execl(const char* path, const char* arg0, ...);
 /* null terminated by having a 0 at the end of argv array*/
 extern int execvp(const char* path, char* argv[]);
 
+/* opendir */
+/* not a clue */
+// extern int opendir(const char* path);
+extern int opendir(const char* path);
+
+extern int readdir(int fd, char* buffer, int index);
 
 #endif

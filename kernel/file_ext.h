@@ -31,6 +31,7 @@ public:
 
         uint32_t addr = (uint32_t) buffer;
         if (addr < 0x80000000) {
+            Debug::printf("kernel space\n");
             return -1;
         }
 

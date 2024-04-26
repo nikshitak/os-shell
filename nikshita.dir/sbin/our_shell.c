@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 
         // for(int i = 0; i <= command_num; i++){
         //     for(int j = 0; arguments[i][j] != (int)'\0'; j++){
-        //         printf("HERE arguments[%d][%d]: %s\n", i, j, arguments[i][j]);
+        //         // printf("HERE arguments[%d][%d]: %s\n", i, j, arguments[i][j]);
         //     }
         // }
 

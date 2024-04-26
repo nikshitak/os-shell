@@ -70,6 +70,10 @@
     "complex": "cpp",
     "system_error": "cpp",
     "condition_variable": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "exception": "cpp",
+    "memory_resource": "cpp",
+    "new": "cpp",
+    "ostream": "cpp"
   }
 }

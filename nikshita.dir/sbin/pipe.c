@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
                 printf("wait failed\n");
             }
             printf("make it into parent process\n");
-            close(fd[1]);  // Close the write end of the pipe
+            // close(fd[1]);  // Close the write end of the pipe
             char buffer[100];
             read(fd[0], buffer, sizeof(buffer));
             printf("Parent received: %s", buffer);

@@ -107,4 +107,9 @@ extern int dup2(int oldfd, int newfd);
 
 extern int pipe(int pipefd[2]);
 
+
+extern int pwd(char* buffer); 
+
+extern int cd(char* buffer, int valid_path); 
+
 #endif

@@ -11,6 +11,8 @@
 #include "u8250.h"
 #include "shared.h"
 
+#include "libk.h"
+
 class Process {
 	constexpr static int NSEM = 10;
 	constexpr static int NCHILD = 10;
@@ -27,10 +29,14 @@ class Process {
 
     Atomic<uint32_t> ref_count {0};
 
+    char* cwd = (char*) "sbin/testfolder"; //root directory 
+
 public:
     Shared<Future<uint32_t>> output = Shared<Future<uint32_t>>::make();// { new Future<uint32_t>() };
     uint32_t *pd = gheith::make_pd();
     static Shared<Process> kernelProcess;
+
+    
 
 	Process(bool isInit);
 	virtual ~Process();
@@ -94,6 +100,18 @@ public:
         files[newfd] = files[oldfd];
 
         return newfd;
+    }
+
+    char* get_cwd(){
+        // if (cwd == nullptr){
+        //     set_cwd((char*) "changed/woo"); 
+        // }
+        return cwd; 
+    }
+
+    void set_cwd(char* new_cwd){
+        
+        memcpy(cwd, new_cwd, K::strlen(new_cwd)); 
     }
 
     friend class Shared<Process>;

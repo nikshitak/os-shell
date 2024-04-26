@@ -2,7 +2,7 @@
 #include "sys.h"
 
 int main(int argc, char **argv) {
-    char *path = "sbin/testfolder";
+    char *path = "sbin/testfolder"; // should be the first argument in argv
 
     int fd = open(path, 0);
     if (fd < 0) {

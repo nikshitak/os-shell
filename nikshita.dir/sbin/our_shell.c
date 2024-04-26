@@ -1,5 +1,5 @@
-#include "libc.h"
 #include "input_functions.h"
+#include "libc.h"
 
 int BACKSPACE = 127;
 int TAB = 9;
@@ -27,6 +27,14 @@ int main(int argc, char **argv) {
                 arguments[arg_index++] = &buf[arg_start];
                 arg_start = i + 1;  // Set the start of the next argument
             }
+            if (buf[i] == TAB) {
+                printf("section 2\n");
+                buf[buffer_index] = '\0';
+                handle_tab(buf, buffer_index);
+                buffer_index = 0;
+                // continue;
+            }
+
             if (arg_index >= MAX_INPUT_LENGTH - 1) {
                 break;  // Avoid overflow
             }
@@ -38,9 +46,9 @@ int main(int argc, char **argv) {
         int id = fork();
         if (id == 0) {
             /* child process */
-            int size = sizeof(arguments[0]);
+            int size = strlen(arguments[0]);
             memcpy(starting_path + 6, arguments[0], size);
-
+            // printf("path %s\n", starting_path);
             int stat = execvp(starting_path, arguments);
             if (stat == -1) {
                 printf("invalid command: %s\n", arguments[0]);

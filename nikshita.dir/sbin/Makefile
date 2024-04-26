@@ -1,4 +1,4 @@
-UTILS = init shell exit echo our_shell login cat grep ls clear
+UTILS = init shell exit echo our_shell login cat grep ls clear pipe
 
 CFLAGS = -std=c99 -m32 -nostdlib -g -O2 -Wall -Werror
 

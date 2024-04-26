@@ -134,3 +134,17 @@ readdir:
     int $48
     ret
 
+	# int dup2(int oldfd, int newfd)
+	.global dup2
+dup2:
+	mov $17,%eax
+	int $48
+	ret
+
+	#int pipe(int fd[2])
+	.global pipe
+pipe:
+	mov $18,%eax
+	int $48
+	ret
+

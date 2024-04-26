@@ -103,4 +103,8 @@ extern int opendir(const char* path);
 /* upto 1024 bytes (1 block) */
 extern int readdir(int fd, char* buffer, int index);
 
+extern int dup2(int oldfd, int newfd);
+
+extern int pipe(int pipefd[2]);
+
 #endif

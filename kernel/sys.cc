@@ -1,5 +1,5 @@
 #include "sys.h"
-
+#include "PipeFile.h"
 #include "debug.h"
 #include "elf.h"
 #include "ext2.h"
@@ -316,6 +316,11 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             // }
 
             // Debug::printf("path: %s\n", (char*)userEsp[1]);
+            int j = 7;
+             while (userEsp[j]) {
+                    Debug::printf("user[%d] = %s\n", j, userEsp[j]);
+                    j++;
+                }
 
             int count = 0;
             i = 5;
@@ -393,6 +398,29 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             int bytes = fd->read((char*) userEsp[2], 1024);
             if (bytes > 0) return (int) userEsp[2];
             else return 0;
+        }
+
+        case 17: /* dup 2 */
+        {
+            int oldfd = (int)userEsp[1];
+            int newfd = (int)userEsp[2];
+            int result = current()->process->dup2(oldfd, newfd);
+            return result;
+        }
+
+        case 18: /* pipe */
+        {
+            int fd[2];
+            Pipe* pipe = new Pipe();
+            int read_fd = current()->process->setFile(Shared<File>(new PipeFile(pipe, 0)));
+            int write_fd = current()->process->setFile(Shared<File>(new PipeFile(pipe, 1)));
+            if(read_fd < 0 || write_fd < 0){
+                return -1;
+            }
+            fd[0] = read_fd;
+            fd[1] = write_fd;
+            memcpy((void*)userEsp[1], fd, 2 * sizeof(int));
+            return 0;
         }
 
         default:

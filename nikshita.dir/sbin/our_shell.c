@@ -61,32 +61,32 @@ int main(int argc, char **argv) {
                 dup2(pipefd[1], 1);
                 close(pipefd[1]);
                 execvp(starting_path, arguments[0]);
-            }
-            //wait for this to finish 
-            uint32_t status = 42;
-            wait(id, &status);
-            if (status != 0) {
-                printf("wait failed 3\n");
-            }
-            //Now fork child number 2
-            int id2 = fork();
-            if(id2 == 0){
-                int size = sizeof(arguments[1][0]);
-                memcpy(starting_path + 6, arguments[1][0], size);
-                close(0);
-                dup2(pipefd[0], 0);
-                close(pipefd[0]);
-                // int j = 0;
-                // while (arguments[1][j]) {
-                //     printf("arguments[1][%d] = %s\n", j, arguments[1][j]);
-                //     j++;
-                // }
-                execvp(starting_path, arguments[1]);
-            }
-            uint32_t status2 = 42;
-            wait(id2, &status2); // <--- Corrected: waited for id2, not id
-            if (status2 != 0) { // <--- Corrected: checked status2, not status
-                printf("wait failed 3\n");
+            }else if(id > 0){
+                uint32_t status = 42;
+                wait(id, &status);
+                if (status != 0) {
+                    printf("wait failed 3\n");
+                }
+                int id2 = fork();
+                if(id2 == 0){
+                    int size = sizeof(arguments[1][0]);
+                    memcpy(starting_path + 6, arguments[1][0], size);
+                    close(0);
+                    dup2(pipefd[0], 0);
+                    close(pipefd[0]);
+                    // int j = 0;
+                    // while (arguments[1][j]) {
+                    //     printf("arguments[1][%d] = %s\n", j, arguments[1][j]);
+                    //     j++;
+                    // }
+                    execvp(starting_path, arguments[1]);
+                }else if(id2 > 0){
+                    uint32_t status2 = 42;
+                    wait(id2, &status2); // <--- Corrected: waited for id2, not id
+                    if (status2 != 0) { // <--- Corrected: checked status2, not status
+                        printf("wait failed 3\n");
+                    }
+                }
             }
         }else{
             int id = fork();

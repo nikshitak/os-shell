@@ -316,11 +316,7 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             // }
 
             // Debug::printf("path: %s\n", (char*)userEsp[1]);
-            int j = 7;
-             while (userEsp[j]) {
-                    Debug::printf("user[%d] = %s\n", j, userEsp[j]);
-                    j++;
-                }
+          
 
             int count = 0;
             i = 5;
@@ -347,6 +343,8 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
                 i++;
             }
 
+            argvMod[count] = nullptr; // Terminate the array with a NULL pointer
+
             int size = K::strlen((char*)userEsp[1]) + 1;
             char* path = new char[size];
 
@@ -359,7 +357,6 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             //     Debug::printf("argvMod[%d]: %s\n", j, argvMod[j]);
             //     j++;
             // }
-            argvMod[i] = nullptr;
             int stat = SYS::exec(path, count, argvMod);
 
             return stat;

@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
         }
     }else{
         fd = 0;
-        pattern = "nice";
     }
 
     // printf("Make it to search fd: %d\n", fd);

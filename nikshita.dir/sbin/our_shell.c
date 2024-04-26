@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
                     //     printf("arguments[1][%d] = %s\n", j, arguments[1][j]);
                     //     j++;
                     // }
-                    execvp(starting_path, arguments[1]);
+                    execl(starting_path, arguments[1][0], arguments[1][1], 0);
                 }else if(id2 > 0){
                     uint32_t status2 = 42;
                     wait(id2, &status2); // <--- Corrected: waited for id2, not id

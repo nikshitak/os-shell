@@ -98,7 +98,14 @@ extern int execvp(const char* path, char* argv[]);
 // extern int opendir(const char* path);
 extern int opendir(const char* path);
 
+/* readdir */
+/* fills the buffer with the different DirectoryEntrys */
+/* upto 1024 bytes (1 block) */
 extern int readdir(int fd, char* buffer, int index);
+
+extern int dup2(int oldfd, int newfd);
+
+extern int pipe(int pipefd[2]);
 
 
 extern int pwd(char* buffer); 

@@ -133,7 +133,19 @@ readdir:
     mov $16,%eax
     int $48
     ret
+	.global dup2
+dup2:
+	mov $17,%eax
+	int $48
+	ret
 
+	#int pipe(int fd[2])
+	.global pipe
+pipe:
+	mov $18,%eax
+	int $48
+	ret
+	
 	.global pwd
 pwd: 
 	mov $19, %eax
@@ -145,3 +157,5 @@ cd:
 	mov $20, %eax
 	int $48
 	ret 
+
+

@@ -77,6 +77,31 @@ public:
 
 	static void init(void);
 
+     int dup2(int oldfd, int newfd) {
+        if (oldfd == newfd) {
+            // If oldfd is equal to newfd, dup2() does nothing, and returns newfd.
+            return newfd;
+        }
+
+        if (oldfd < 0 || oldfd >= NFILE || files[oldfd] == nullptr) {
+            // Invalid oldfd
+            return -1;
+        }
+
+        if (newfd < 0 || newfd >= NFILE) {
+            // Invalid newfd
+            return -1;
+        }
+
+        // Close newfd if it's open
+        close(newfd);
+
+        // Duplicate the file descriptor
+        files[newfd] = files[oldfd];
+
+        return newfd;
+    }
+
     char* get_cwd(){
         // if (cwd == nullptr){
         //     set_cwd((char*) "changed/woo"); 

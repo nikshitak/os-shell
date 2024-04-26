@@ -395,6 +395,99 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             else return 0;
         }
 
+        //case 17/18 - dup2 pipe 
+
+        case 19: /* pwd */
+        {
+            char* buffer = (char*)userEsp[1]; 
+            
+
+            // char* curr_cwd = (char*) "changed/woo"; 
+
+
+            char* curr_cwd = (char*) current()->process->get_cwd(); 
+            // Debug::printf("buffer input - %s\n", buffer); 
+            
+            if (curr_cwd == nullptr){
+            //     current()->process->set_cwd((char*) "sbin/testfolder"); 
+            //     //placeholder - root 
+                return -1; 
+            }
+            
+            memcpy(buffer, curr_cwd, K::strlen(curr_cwd)); 
+            // Debug::printf("len: %d\n", K::strlen(curr_cwd));
+            // Debug::printf("buffer %s\n", buffer); 
+            // Debug::printf("curr cwd %s\n", curr_cwd); 
+            return 0; 
+            // return curr_cwd; 
+        }
+
+        case 20: /* cd */
+        {
+            char* added_path = (char*) userEsp[1]; 
+            int path_checked = (int) userEsp[2]; 
+
+            if (path_checked == 0){
+                int added_length = K::strlen(added_path); 
+            
+                char* stored_addition[added_length]; 
+
+                //check if it is parent dir 
+
+                if (added_path[0] == '.' && added_path[1] == '.'){
+                    Debug::printf(""); 
+                    char* curr_cwd = current()->process->get_cwd(); 
+                    int size = K::strlen(curr_cwd); 
+                    int index = size - 1;
+                    while (curr_cwd[index] != '/'){
+                        index--; 
+                    }
+
+                    if (index != 0){
+                        // Debug::printf("index: %d\n", index);
+                        memcpy(added_path, curr_cwd, index); 
+                    }
+                }
+                else {
+                    memcpy(stored_addition, added_path, added_length);
+
+                    char* curr_cwd = (char*) current()->process->get_cwd(); 
+                    int prev_len = K::strlen(curr_cwd); 
+
+                    // int size = prev_len + added_length + 1; 
+
+                    // char* final_path[size]; 
+
+                    memcpy(added_path, curr_cwd, K::strlen(curr_cwd)); 
+                    memcpy(added_path + prev_len, (char*) "/", 1); 
+                    memcpy(added_path + prev_len + 1, stored_addition, added_length); 
+                    // memcpy(added_path + prev_len + 1 + added_length, (char*) '\0', 1); 
+                    added_path[prev_len + 1 + added_length] = '\0';
+
+                    // Debug::printf("path sent back - %s at length %d\n", added_path, K::strlen(added_path));
+
+                    
+                    
+                }
+
+                
+                return 0; 
+            }
+            else{
+                
+                current()->process->set_cwd(added_path); 
+                // Debug::printf("dot dot pLEASE - %s\n", current()->process->get_cwd()); 
+                return 0; 
+            }
+            
+
+            
+
+            
+
+
+        }
+
         default:
             Debug::printf("*** 1000000000 unknown system call %d\n", eax);
             return -1;

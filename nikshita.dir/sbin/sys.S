@@ -134,3 +134,14 @@ readdir:
     int $48
     ret
 
+	.global pwd
+pwd: 
+	mov $19, %eax
+	int $48
+	ret 
+
+	.global cd 
+cd: 
+	mov $20, %eax
+	int $48
+	ret 

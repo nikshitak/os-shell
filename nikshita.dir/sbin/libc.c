@@ -24,6 +24,7 @@ void cp(int from, int to) {
         ssize_t n = read(from,buf,100);
         if (n == 0) break;
         if (n < 0) {
+            printf("hello?\n");
             printf("*** %s:%d read error, fd = %d\n",__FILE__,__LINE__,from);
             break;
         }

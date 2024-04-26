@@ -100,4 +100,9 @@ extern int opendir(const char* path);
 
 extern int readdir(int fd, char* buffer, int index);
 
+
+extern int pwd(char* buffer); 
+
+extern int cd(char* buffer, int valid_path); 
+
 #endif

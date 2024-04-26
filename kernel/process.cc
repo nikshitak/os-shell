@@ -166,7 +166,7 @@ int Process::close(int id) {
 
 	index = getChildIndex(id);
 	if (index != -1) {
-		Debug::printf("is in here\n");
+		// Debug::printf("is in here\n");
 		auto e = children[index];
 		if (e == nullptr) {
 			return -1;

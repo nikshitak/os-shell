@@ -57,13 +57,12 @@ void handle_tab(char *buf, int buffer_index) {
             }
         }
 
+        printf("\n");
         if (num_matches == 0) {
             printf("No matches found\n");
         } else if (num_matches == 1) {
-            printf("\n%s\n", matches[0]);
+            printf("%s\n", matches[0]);
         } else {
-            // Multiple matches, display the list
-            printf("Possible completions:\n");
             for (int i = 0; i < num_matches; i++) {
                 printf("%s\t", matches[i]);
             }
@@ -71,9 +70,7 @@ void handle_tab(char *buf, int buffer_index) {
         }
 
         printf("$ %s", buf);
-        // fflush(stdout); // Flush 
 
-        // Clean up allocated memory
         for (int i = 0; i < num_matches; i++) {
             free(matches[i]);
         }

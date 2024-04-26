@@ -27,13 +27,6 @@ int main(int argc, char **argv) {
                 arguments[arg_index++] = &buf[arg_start];
                 arg_start = i + 1;  // Set the start of the next argument
             }
-            if (buf[i] == TAB) {
-                printf("section 2\n");
-                buf[buffer_index] = '\0';
-                handle_tab(buf, buffer_index);
-                buffer_index = 0;
-                // continue;
-            }
 
             if (arg_index >= MAX_INPUT_LENGTH - 1) {
                 break;  // Avoid overflow
@@ -65,9 +58,6 @@ int main(int argc, char **argv) {
         } else {
             printf("fork failed\n");
         }
-
-        // TODO: hardcode exit to exit current shell
-        // important when running nested shells.
     }
 
     shutdown();

@@ -1,6 +1,9 @@
 #include "libc.h"
 
 /*This file is to have a location for us to put all of our user input functions*/
+
+
+/* this function handles the functionality for the tab function */
 void handle_tab(char *buf, int buffer_index);
 
 /*This method will read in the user input from stdin with an echo updating on the terminal*/

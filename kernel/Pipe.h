@@ -44,7 +44,7 @@ public:
             bytes_written++;
             read_sem->up();
         }
-        Debug::printf("This is the pipes buffer: %s\n", buffer);
+        // Debug::printf("This is the pipes buffer: %s\n", buffer);
         lock->up();
         return bytes_written;
     }

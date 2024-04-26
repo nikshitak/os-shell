@@ -20,13 +20,14 @@ int main(int argc, char** argv) {
             printf("cat: %s: No such file or directory\n", filename);
         }
     }else{
+        printf("this is null\n");
         fd = 0;
     }
 
     printf("Make it to search fd: %d\n", fd);
     char line[1024]; // Adjust the size according to your needs
     while (fgets(line, sizeof(line), fd)) {
-        printf("this is my line: %s\n", line);
+        // printf("this is my line: %s\n", line);
         if (strstr(line, pattern)) {
             printf("%s", line);
         }

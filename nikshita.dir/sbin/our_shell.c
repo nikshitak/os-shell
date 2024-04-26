@@ -42,11 +42,11 @@ int main(int argc, char **argv) {
         }
         arguments[command_num][arg_index] = '\0';  // Set the last element to NULL for execvp
 
-        for(int i = 0; i <= command_num; i++){
-            for(int j = 0; arguments[i][j] != (int)'\0'; j++){
-                printf("HERE arguments[%d][%d]: %s\n", i, j, arguments[i][j]);
-            }
-        }
+        // for(int i = 0; i <= command_num; i++){
+        //     for(int j = 0; arguments[i][j] != (int)'\0'; j++){
+        //         // printf("HERE arguments[%d][%d]: %s\n", i, j, arguments[i][j]);
+        //     }
+        // }
 
         printf("\n");  // prints output after user presses enter on a new line
 
@@ -76,11 +76,11 @@ int main(int argc, char **argv) {
                 close(0);
                 dup2(pipefd[0], 0);
                 close(pipefd[0]);
-                int j = 0;
-                while (arguments[1][j]) {
-                    printf("arguments[1][%d] = %s\n", j, arguments[1][j]);
-                    j++;
-                }
+                // int j = 0;
+                // while (arguments[1][j]) {
+                //     printf("arguments[1][%d] = %s\n", j, arguments[1][j]);
+                //     j++;
+                // }
                 execvp(starting_path, arguments[1]);
             }
             uint32_t status2 = 42;

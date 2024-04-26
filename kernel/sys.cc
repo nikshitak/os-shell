@@ -417,6 +417,9 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             if(read_fd < 0 || write_fd < 0){
                 return -1;
             }
+
+            
+
             fd[0] = read_fd;
             fd[1] = write_fd;
             memcpy((void*)userEsp[1], fd, 2 * sizeof(int));

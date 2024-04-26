@@ -7,6 +7,7 @@ int main(int argc, char** argv) {
             printf("cat: %s: No such file or directory\n", argv[i]);
         }else{
             cp(fd, 1);
+            printf("\n");
         }
     }
 }

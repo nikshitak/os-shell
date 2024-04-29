@@ -2,7 +2,16 @@
 #include "sys.h"
 
 int main(int argc, char **argv) {
-    char *path = "sbin/testfolder"; // should be the first argument in argv
+    // char *path = "sbin/testfolder"; // should be the first argument in argv
+    char* path = (char*) ""; 
+
+    int stat = pwd(path); 
+
+    // printf("current path - %s\n", path); //delete 
+
+    if (stat == -1){
+        return 1; 
+    }
 
     int fd = open(path, 0);
     if (fd < 0) {

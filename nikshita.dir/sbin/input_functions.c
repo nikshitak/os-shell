@@ -16,10 +16,7 @@ void handle_tab(char *buf, int buffer_index) {
 
     int fd = open(path, 0);
     if (fd < 0) {
-        printf(
-            "ls: cannot access '%s': No such file or "
-            "directory\n",
-            path);
+        printf("ls: cannot access '%s': No such file or directory\n", path);
     } else {
         char buffer[1024];
         int offset = 0;
@@ -135,6 +132,7 @@ int read_input_silent(char *buf, int buf_size) {
             }
         } else if (c == TAB) {
             handle_tab(buf, buffer_index);
+            
             printf("\nbuffer index: %d\n", buffer_index);
         } else {
             if (buffer_index <

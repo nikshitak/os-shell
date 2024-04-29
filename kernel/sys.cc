@@ -441,29 +441,38 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
             //     //placeholder - root 
                 return -1; 
             }
+
+            int length = K::strlen(curr_cwd); 
             
-            memcpy(buffer, curr_cwd, K::strlen(curr_cwd)); 
-            // Debug::printf("len: %d\n", K::strlen(curr_cwd));
+            memcpy(buffer, curr_cwd, length); 
+            buffer[length] = '\0'; 
+
+            // Debug::printf("len of curr cwd: %d\n", K::strlen(curr_cwd));
+            // Debug::printf("len of buffer: %d\n", K::strlen(buffer)); 
+
             // Debug::printf("buffer %s\n", buffer); 
             // Debug::printf("curr cwd %s\n", curr_cwd); 
+            
             return 0; 
             // return curr_cwd; 
         }
 
         case 20: /* cd */
         {
+            //store inputs 
             char* added_path = (char*) userEsp[1]; 
             int path_checked = (int) userEsp[2]; 
 
             if (path_checked == 0){
                 int added_length = K::strlen(added_path); 
+                // Debug::printf("added path length - %d\n", added_length); 
             
-                char* stored_addition[added_length]; 
+                char* stored_addition = (char*)""; //to copy over the new path 
 
-                //check if it is parent dir 
 
-                if (added_path[0] == '.' && added_path[1] == '.'){
-                    Debug::printf(""); 
+                //check if it wants the parent dir 
+                if (added_length == 2 && (added_path[0] == '.' && added_path[1] == '.')){
+                    // Debug::printf(""); 
                     char* curr_cwd = current()->process->get_cwd(); 
                     int size = K::strlen(curr_cwd); 
                     int index = size - 1;
@@ -476,43 +485,32 @@ extern "C" int sysHandler(uint32_t eax, uint32_t* frame) {
                         memcpy(added_path, curr_cwd, index); 
                     }
                 }
+                //this directory 
+                else if (added_length == 1 && added_path[0] == '.'){
+                    //do nothing!!
+                }
+                //any other directory 
                 else {
                     memcpy(stored_addition, added_path, added_length);
+                    stored_addition[added_length] = '\0'; 
 
                     char* curr_cwd = (char*) current()->process->get_cwd(); 
+
                     int prev_len = K::strlen(curr_cwd); 
-
-                    // int size = prev_len + added_length + 1; 
-
-                    // char* final_path[size]; 
 
                     memcpy(added_path, curr_cwd, K::strlen(curr_cwd)); 
                     memcpy(added_path + prev_len, (char*) "/", 1); 
                     memcpy(added_path + prev_len + 1, stored_addition, added_length); 
-                    // memcpy(added_path + prev_len + 1 + added_length, (char*) '\0', 1); 
-                    added_path[prev_len + 1 + added_length] = '\0';
-
-                    // Debug::printf("path sent back - %s at length %d\n", added_path, K::strlen(added_path));
-
-                    
-                    
+                    added_path[prev_len + 1 + added_length] = '\0'; 
                 }
-
-                
+                //done with setting new path 
                 return 0; 
             }
+            //set the new cwd - rel path is already checked 
             else{
-                
                 current()->process->set_cwd(added_path); 
-                // Debug::printf("dot dot pLEASE - %s\n", current()->process->get_cwd()); 
                 return 0; 
             }
-            
-
-            
-
-            
-
 
         }
 

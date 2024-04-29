@@ -102,16 +102,19 @@ public:
         return newfd;
     }
 
+    //get the cwd 
     char* get_cwd(){
-        // if (cwd == nullptr){
-        //     set_cwd((char*) "changed/woo"); 
-        // }
         return cwd; 
     }
 
+    //set the cwd 
     void set_cwd(char* new_cwd){
-        
+        int length = K::strlen(new_cwd); 
+        //set the new cwd to a new valid path 
+        //already checked it was valid in sys cd() 
         memcpy(cwd, new_cwd, K::strlen(new_cwd)); 
+        cwd[length] = '\0'; //null 
+        
     }
 
     friend class Shared<Process>;

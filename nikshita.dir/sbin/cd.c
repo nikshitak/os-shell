@@ -9,26 +9,23 @@
 int main(int argc, char** argv){
     
     char* potential_path = argv[1];  
-    
 
-    // int stat = cd(potential_path); 
-
+    //call cd on new path 
     cd(potential_path, 0); 
-    // printf("potential path - %s\n", potential_path); 
 
-
-    // printf("stat = %d\n", stat); 
-
+    //check if new file is valid 
     
     if (open(potential_path, 0) == -1){
-        
-        // printf("cd: %s: No such file or directory\n", potential_path);
+        //if not valid, throw error 
+        printf("cd: %s: No such file or directory\n", potential_path);
     }
     else {
+        //if valid, set the new path in cd 
         cd(potential_path, 1); 
-        // printf("cd = %s\n", potential_path); 
     }
 
+    // printf("cd = %s\n", potential_path); 
+    //done 
     return 0; 
 
 }
